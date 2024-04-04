@@ -1,2 +1,5 @@
-# Hackathon_2024
-repo for MIPT hackathon 2024
+# MIPT Hackathon_2024
+## Это репозиторий для участников хакатона МФТИ.
+1) Для начала работы участником рекомендуется прочитать [инструкцию](https://github.com/serikov1/Hackathon_2024/blob/main/instruction.pdf) по протоколу данных
+2) Папка, необходимая для проверки приема-передачи данных, называется COMReader_for_participant
+3) По всем возникшим вопросам на тему приема-передачи данных обращаться в [Telegram](https://t.me/savres)
