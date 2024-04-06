@@ -7,10 +7,10 @@ import os
 USER_name = 'FAKI'
 
 CDMK = serial.Serial(
-    port="/dev/ttyUSB1", baudrate=115200, bytesize=8, timeout=100, stopbits=serial.STOPBITS_ONE
+    port="/dev/ttyUSB0", baudrate=115200, bytesize=8, timeout=100, stopbits=serial.STOPBITS_ONE
 )
 USER = serial.Serial(
-    port="/dev/ttyUSB0", baudrate=115200, bytesize=8, timeout=100, stopbits=serial.STOPBITS_ONE
+    port="/dev/ttyUSB1", baudrate=115200, bytesize=8, timeout=100, stopbits=serial.STOPBITS_ONE
 )
 CDMK_data = f'{USER_name}_CDMK_data'
 USER_data = f'{USER_name}_data'
@@ -37,7 +37,7 @@ getUSER = 0
 keyIsPressed = 0
 amountOfNaN = 0
 main_dir = os.getcwd()
-print(main_dir)
+print('Ready to start \n')
 
 while True:
     if keyboard.read_key() == 'r':
@@ -62,6 +62,7 @@ while True:
                         for i in range(9):
                             result_USER[i] = struct.unpack('<f', struct.pack('4b', *raw_list_USER[4 * i: 4 + 4 * i]))[0]
                         if math.isnan not in result_USER:
+                            print(f'Data from {USER_name} group device: \n')
                             print(result_USER)
                             getUSER = 1
                             USER.write(bytes('s', 'utf-8'))
@@ -95,6 +96,7 @@ while True:
                                 if math.isnan(result_CDMK[i]) or abs(result_CDMK[i]) > 10000 or abs(result_CDMK[i]) < 0.000001:
                                     amountOfNaN += 1
                             if amountOfNaN == 0:
+                                print('\nData from CDMK: \n')
                                 print(result_CDMK)
                                 getCDMK = 1
                                 keyIsPressed = 0
@@ -132,6 +134,7 @@ while True:
             deviation_list[6] += result[9*i+6]
             deviation_list[7] += result[9*i+7]
             deviation_list[8] += result[9*i+8]
+        print('\nDeviation between received data')
         print(deviation_list)
         deviation_list_res = [x / numOfCalc for x in deviation_list]
         deviation_list = [0] * 9

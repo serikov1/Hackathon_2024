@@ -19,7 +19,7 @@ getUSER = 0
 
 keyIsPressed = 0
 main_dir = os.getcwd()
-
+print('Ready to start, press r for getting data from your device')
 while True:
     if keyboard.read_key() == 'r':
         keyIsPressed = 1
@@ -43,6 +43,7 @@ while True:
                         for i in range(9):
                             result_USER[i] = struct.unpack('<f', struct.pack('4b', *raw_list_USER[4 * i: 4 + 4 * i]))[0]
                         if math.isnan not in result_USER:
+                            print('Received data: \n')
                             print(result_USER)
                             getUSER = 1
                             USER.write(bytes('s', 'utf-8'))

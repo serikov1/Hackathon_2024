@@ -37,7 +37,7 @@ getUSER = 0
 keyIsPressed = 0
 amountOfNaN = 0
 main_dir = os.getcwd()
-
+print('Ready to start')
 while True:
     if keyboard.read_key() == 'r':
         keyIsPressed = 1
@@ -61,6 +61,7 @@ while True:
                         for i in range(9):
                             result_USER[i] = struct.unpack('<f', struct.pack('4b', *raw_list_USER[4 * i: 4 + 4 * i]))[0]
                         if math.isnan not in result_USER:
+                            print(f'Data from {USER_name} group device: \n')
                             print(result_USER)
                             getUSER = 1
                             USER.write(bytes('s', 'utf-8'))
@@ -94,6 +95,7 @@ while True:
                                 if math.isnan(result_CDMK[i]) or abs(result_CDMK[i]) > 10000 or abs(result_CDMK[i]) < 0.000001:
                                     amountOfNaN += 1
                             if amountOfNaN == 0:
+                                print('\n Data from CDMK: \n')
                                 print(result_CDMK)
                                 getCDMK = 1
                                 keyIsPressed = 0
@@ -120,7 +122,6 @@ while True:
             if counter % 9 == 0:
                 fDEV.write('\n')
         numOfCalc = counter / 9
-        print(numOfCalc)
         for i in range(int(numOfCalc)):
             deviation_list[0] += result[9*i]
             deviation_list[1] += result[9*i+1]
@@ -131,6 +132,7 @@ while True:
             deviation_list[6] += result[9*i+6]
             deviation_list[7] += result[9*i+7]
             deviation_list[8] += result[9*i+8]
+        print('\n Deviation results: \n')
         print(deviation_list)
         deviation_list_res = [x / numOfCalc for x in deviation_list]
         deviation_list = [0] * 9
