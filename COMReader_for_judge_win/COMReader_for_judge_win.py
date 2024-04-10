@@ -38,6 +38,14 @@ keyIsPressed = 0
 amountOfNaN = 0
 main_dir = os.getcwd()
 print('Ready to start')
+
+if not os.path.isdir(f'{USER_name}'):
+    os.mkdir(f'{USER_name}')
+os.chdir(f'{USER_name}')
+with open(f'{USER_data}.txt', 'w') as fileUSER:
+    pass
+os.chdir(main_dir)
+
 while True:
     if keyboard.read_key() == 'r':
         keyIsPressed = 1
@@ -46,6 +54,7 @@ while True:
     if keyboard.read_key() == 's':
         pass
 
+    serialStringUSER = 0
     if USER.in_waiting > 0 and keyIsPressed and (not getUSER):
         serialStringUSER = USER.read(1)
         if serialStringUSER.hex(' ') == "02":
@@ -57,10 +66,10 @@ while True:
                     if serialStringUSER.hex(' ') == "bd":
                         raw_string_USER = USER.read(36)
                         raw_list_USER = [elem - 256 if elem > 127 else elem for elem in list(raw_string_USER)]
-
+                        serialStringUSER = 0xBB
                         for i in range(9):
                             result_USER[i] = struct.unpack('<f', struct.pack('4b', *raw_list_USER[4 * i: 4 + 4 * i]))[0]
-                        if math.isnan not in result_USER:
+                        if amountOfNaN == 0:
                             print(f'Data from {USER_name} group device: \n')
                             print(result_USER)
                             getUSER = 1
@@ -75,6 +84,7 @@ while True:
                 fileUSER.write(str(item) + ' ')
             fileUSER.write('\n')
         getUSER = 0
+        os.chdir(main_dir)
 
     if CDMK.in_waiting > 0 and (not getCDMK):
         while keyIsPressed:
@@ -91,8 +101,10 @@ while True:
 
                             amountOfNaN = 0
                             for i in range(9):
-                                result_CDMK[i] = struct.unpack('<f', struct.pack('4b', *raw_list_CDMK[60 + 4 * i: 64 + 4 * i]))[0]
-                                if math.isnan(result_CDMK[i]) or abs(result_CDMK[i]) > 10000 or abs(result_CDMK[i]) < 0.000001:
+                                result_CDMK[i] = \
+                                struct.unpack('<f', struct.pack('4b', *raw_list_CDMK[60 + 4 * i: 64 + 4 * i]))[0]
+                                if math.isnan(result_CDMK[i]) or abs(result_CDMK[i]) > 10000 or abs(
+                                        result_CDMK[i]) < 0.000001:
                                     amountOfNaN += 1
                             if amountOfNaN == 0:
                                 print('\n Data from CDMK: \n')
@@ -101,13 +113,22 @@ while True:
                                 keyIsPressed = 0
 
     if getCDMK:
-        with open(f'{CDMK_data}.txt', 'a') as fileCDMK:
+        if not os.path.isdir(f'{USER_name}'):
+            os.mkdir(f'{USER_name}')
+        os.chdir(f'{USER_name}')
+        with open(f'{CDMK_data}.txt', 'a+') as fileCDMK, open(f'{USER_data}.txt', 'a+') as fileUSER_ERR:
             for item in result_CDMK:
                 fileCDMK.write(str(item) + ' ')
             fileCDMK.write('\n')
+            if len(fileCDMK.readlines()) != len(fileUSER_ERR.readlines()):
+                for item in result_CDMK:
+                    fileUSER_ERR.write('0' + ' ')
+                fileUSER_ERR.write('\n')
         getCDMK = 0
+        os.chdir(main_dir)
 
-    with open(f'{deviation_data}.txt', 'w') as fDEV, open(f'{USER_data}.txt', 'r') as fUSER, open(f'{CDMK_data}.txt', 'r') as fCDMK:
+    os.chdir(f'{USER_name}')
+    with open(f'{deviation_data}.txt', 'w') as fDEV, open(f'{USER_data}.txt', 'r') as fUSER, open(f'{CDMK_data}.txt','r') as fCDMK:
         a1 = list(map(lambda x: float(x), fUSER.read().split()))
         a2 = list(map(lambda x: float(x), fCDMK.read().split()))
         result = list(map(lambda x, y: abs(abs(x) - abs(y)), a1, a2))
@@ -123,15 +144,15 @@ while True:
                 fDEV.write('\n')
         numOfCalc = counter / 9
         for i in range(int(numOfCalc)):
-            deviation_list[0] += result[9*i]
-            deviation_list[1] += result[9*i+1]
-            deviation_list[2] += result[9*i+2]
-            deviation_list[3] += result[9*i+3]
-            deviation_list[4] += result[9*i+4]
-            deviation_list[5] += result[9*i+5]
-            deviation_list[6] += result[9*i+6]
-            deviation_list[7] += result[9*i+7]
-            deviation_list[8] += result[9*i+8]
+            deviation_list[0] += result[9 * i]
+            deviation_list[1] += result[9 * i + 1]
+            deviation_list[2] += result[9 * i + 2]
+            deviation_list[3] += result[9 * i + 3]
+            deviation_list[4] += result[9 * i + 4]
+            deviation_list[5] += result[9 * i + 5]
+            deviation_list[6] += result[9 * i + 6]
+            deviation_list[7] += result[9 * i + 7]
+            deviation_list[8] += result[9 * i + 8]
         print('\n Deviation results: \n')
         print(deviation_list)
         deviation_list_res = [x / numOfCalc for x in deviation_list]
@@ -147,6 +168,6 @@ while True:
         summ = 0
         for elem in deviation_list_res:
             summ += elem
-        fDEV.write(str(summ/9))
+        fDEV.write(str(summ / 9))
 
     os.chdir(main_dir)

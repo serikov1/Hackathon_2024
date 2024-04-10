@@ -39,6 +39,13 @@ amountOfNaN = 0
 main_dir = os.getcwd()
 print('Ready to start \n')
 
+if not os.path.isdir(f'{USER_name}'):
+    os.mkdir(f'{USER_name}')
+os.chdir(f'{USER_name}')
+with open(f'{USER_data}.txt', 'w') as fileUSER:
+    pass
+os.chdir(main_dir)
+
 while True:
     if keyboard.read_key() == 'r':
         keyIsPressed = 1
@@ -76,6 +83,7 @@ while True:
                 fileUSER.write(str(item) + ' ')
             fileUSER.write('\n')
         getUSER = 0
+        os.chdir(main_dir)
 
     if CDMK.in_waiting > 0 and (not getCDMK):
         while keyIsPressed:
@@ -102,6 +110,9 @@ while True:
                                 keyIsPressed = 0
 
     if getCDMK:
+        if not os.path.isdir(f'{USER_name}'):
+            os.mkdir(f'{USER_name}')
+        os.chdir(f'{USER_name}')
         with open(f'{CDMK_data}.txt', 'a') as fileCDMK:
             for item in result_CDMK:
                 fileCDMK.write(str(item) + ' ')
