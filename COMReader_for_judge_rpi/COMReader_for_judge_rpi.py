@@ -91,6 +91,9 @@ while True:
 
     if CDMK.in_waiting > 0 and (not getCDMK):
         while keyIsPressed:
+            CDMK.read_all()
+            time.sleep(1)
+            CDMK.read_all()
             serialStringCDMK = CDMK.read(1)
             if serialStringCDMK.hex(' ') == "02":
                 serialStringCDMK = CDMK.read(1)
